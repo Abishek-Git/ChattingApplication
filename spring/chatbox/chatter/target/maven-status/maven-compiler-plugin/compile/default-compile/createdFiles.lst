@@ -1,0 +1,9 @@
+chatter\dao\MessageDao.class
+chatter\dao\UserDao.class
+chatter\service\MessageService.class
+chatter\controller\UserController.class
+chatter\entity\Message.class
+chatter\service\UserService.class
+chatter\controller\MessageController.class
+chatter\entity\User.class
+chatter\service\Servicelass.class
