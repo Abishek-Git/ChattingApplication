@@ -142,22 +142,45 @@ Backend settings live in
 
 - `server.port=8080`, `server.servlet.context-path=/chatter`
 - H2 in-memory datasource with `ddl-auto=update`
+- Database credentials are read from the `DB_USERNAME` / `DB_PASSWORD` environment
+  variables (defaulting to `sa` / empty for local H2), so no real password is
+  hard-coded in the repo
 - H2 console enabled at **http://localhost:8080/chatter/h2-console**
   (JDBC URL `jdbc:h2:mem:chatter`, user `sa`, empty password)
 
-To use a persistent database instead, change `spring.datasource.*` and the
-dialect in `application.properties`.
+To use a persistent database instead, set `DB_USERNAME` / `DB_PASSWORD` and change
+`spring.datasource.url` and the dialect in `application.properties`.
 
 ### npm registry note
 
 If `registry.npmjs.org` is blocked on your network (e.g. behind a corporate
-proxy), point npm at an allowed mirror or your internal registry via
-`Angular/chatbox/.npmrc`, for example:
+proxy or web gateway), copy the template and point npm at an allowed mirror or
+your internal registry. The real `.npmrc` is **gitignored** so environment-specific
+settings and any auth tokens are never committed:
+
+```powershell
+cd Angular/chatbox
+copy .npmrc.example .npmrc   # then edit the registry line
+```
+
+Example `.npmrc`:
 
 ```
 registry=https://registry.npmmirror.com/
 legacy-peer-deps=true
 ```
+
+## Security notes
+
+- **Passwords are never returned by the API.** `User.password` is annotated
+  `@JsonProperty(access = WRITE_ONLY)`, so it is accepted on login requests but
+  omitted from every JSON response (and therefore never stored in the browser).
+- **No secrets in source control.** Database credentials come from `DB_USERNAME` /
+  `DB_PASSWORD` env vars, and `.gitignore` excludes build output (`target/`,
+  `dist/`, `node_modules/`, `.angular/`), IDE files, `.env*`, and `.npmrc`.
+- The seed credentials in `data.sql` are **demo-only** values for the throwaway
+  in-memory database. For production, store password hashes (e.g. BCrypt) rather
+  than plain text and verify them during login.
 
 ---
 

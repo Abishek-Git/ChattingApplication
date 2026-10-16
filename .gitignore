@@ -102,3 +102,45 @@ dist
 
 # TernJS port file
 .tern-port
+
+# ---------------------------------------------------------------------------
+# Java / Maven (Spring Boot backend)
+# ---------------------------------------------------------------------------
+target/
+build/
+*.class
+*.jar
+*.war
+hs_err_pid*
+replay_pid*
+
+# ---------------------------------------------------------------------------
+# Angular / frontend build output & cache
+# ---------------------------------------------------------------------------
+.angular/
+dist/
+/Angular/chatbox/dist/
+*.tsbuildinfo
+
+# ---------------------------------------------------------------------------
+# IDE / editor files
+# ---------------------------------------------------------------------------
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+.springBeans
+.apt_generated/
+
+# ---------------------------------------------------------------------------
+# Local config & secrets (never commit) — use the *.example templates instead
+# ---------------------------------------------------------------------------
+.npmrc
+.env
+.env.*
+*.local
+application-local.properties
+secrets.properties
+.credentials

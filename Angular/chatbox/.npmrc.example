@@ -1,0 +1,13 @@
+# Copy this file to `.npmrc` (which is gitignored) and adjust for your environment.
+#
+# If registry.npmjs.org is blocked on your network (corporate proxy / web gateway),
+# point npm at an allowed public mirror or your internal registry:
+#
+#   registry=https://registry.npmmirror.com/
+#   registry=https://<your-corporate-artifactory>/api/npm/<repo>/
+
+legacy-peer-deps=true
+
+# Enable ONLY if your network performs TLS inspection and Node cannot verify the
+# certificate chain. Leave this out on trusted networks.
+# strict-ssl=false
