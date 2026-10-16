@@ -2,6 +2,7 @@ package chatter.entity;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,11 +27,11 @@ public class Message {
 	@JoinColumn(name="receiverId")
 	private User receiverId;
 
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int roomId;
 
 	private String message;
 
+	@Column(name = "msg_time")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date time;
 

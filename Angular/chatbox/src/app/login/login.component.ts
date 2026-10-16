@@ -14,23 +14,30 @@ export class LoginComponent implements OnInit {
     password : ''
   }
    authUser : any;
+   error : boolean = false;
   constructor(private route:Router, private userService : UserService) { }
   ngOnInit(): void {
-    this.authUser = sessionStorage.getItem("authuser")
-    this.authUser = JSON.stringify(this.authUser)
+    const stored = sessionStorage.getItem("authuser");
+    this.authUser = stored ? JSON.parse(stored) : null;
   }
 
   login(){
-    this.userService.login(this.user).subscribe(data=>{
-      this.authUser = JSON.stringify(data);
-      sessionStorage.setItem("authuser",this.authUser)
-    console.log(this.authUser);
-    })
-    
-
+    this.error = false;
+    this.userService.login(this.user).subscribe({
+      next : (data : any) => {
+        if (data) {
+          sessionStorage.setItem("authuser", JSON.stringify(data));
+          window.location.href = '/';
+        } else {
+          this.error = true;
+        }
+      },
+      error : () => { this.error = true; }
+    });
   }
   logout(){
     sessionStorage.removeItem("authuser")
+    this.authUser = null;
   }
 
 }

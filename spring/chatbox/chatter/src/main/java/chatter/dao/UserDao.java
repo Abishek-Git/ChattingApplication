@@ -3,10 +3,11 @@ package chatter.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import chatter.entity.User;
@@ -15,11 +16,11 @@ import chatter.entity.User;
 
 @Repository
 public class UserDao {
-	@Autowired
-	SessionFactory sessionFactory;
+	@PersistenceContext
+	EntityManager entityManager;
 	
 	protected Session getSession() {
-		return sessionFactory.getCurrentSession();
+		return entityManager.unwrap(Session.class);
 	}
 
 	public User userByEmailPass(String email, String password) {

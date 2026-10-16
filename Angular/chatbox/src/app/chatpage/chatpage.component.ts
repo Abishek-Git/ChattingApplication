@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Message } from '../entity/Message';
 import { MessageService } from '../services/message.service';
-import * as $ from 'jquery';
 import { UserService } from '../services/user.service';
 
 @Component({
@@ -12,10 +10,11 @@ import { UserService } from '../services/user.service';
   styleUrls: ['./chatpage.component.css']
 })
 export class ChatpageComponent implements OnInit {
-  constructor(private aroute: ActivatedRoute, private messageService : MessageService, private userService : UserService) { }
+  constructor(private aroute: ActivatedRoute, private router: Router, private messageService : MessageService, private userService : UserService) { }
   userId: any;
-  receiver : any;
+  receiver : any = {};
   authUser : any;
+  users : any = [];
   message : Message = {
     message: '',
     messageId: 0,
@@ -39,62 +38,57 @@ export class ChatpageComponent implements OnInit {
 
   
   ngOnInit(): void {
-    this.userId = this.aroute.snapshot.params['userId'];
-    this.userService.userById(this.userId).subscribe(data=>{
-      this.receiver = data
-      this.authUser = sessionStorage.getItem("authuser")
-    this.authUser = JSON.parse(this.authUser)
-    this.message.senderId.userId = this.authUser.userId
-    this.message.receiverId.userId = this.userId
-    
-    this.messages = this.messageService.getMessageBySenderId(this.authUser.userId, this.userId).subscribe(data=>{
-      this.messages = data
-      this.messageService.getMessageBySenderId(this.userId, this.authUser.userId).subscribe(data=>{
-        this.allmsg = data
-        this.messages = this.messages.concat(this.allmsg)
-      })
-    })
-    })
-    
-    
-    
-  
-  }
-
- 
-
-  
-    sendMessage(){
-      console.log(this.message);
-      
-    this.messageService.setMessage(this.message).subscribe(data=>{
-
+    const stored = sessionStorage.getItem("authuser");
+    this.authUser = stored ? JSON.parse(stored) : null;
+    if (this.authUser == null) {
+      this.router.navigate(['login']);
+      return;
+    }
+    this.userService.getAllUsers().subscribe(data => {
+      this.users = (data as any[]).filter(u => u.userId != this.authUser.userId);
     });
-    window.location.reload();
+    this.aroute.params.subscribe(params => {
+      this.userId = params['userId'];
+      this.loadConversation();
+    });
   }
 
-  rclass : string= "message-data text-right"
-  dclass : string = "message-data"
-  set(id : number){
-    console.log(this.messages);
-    if(id == this.authUser.userId){
-      console.log(id + " "+ this.authUser.userId);
-      
-      return this.rclass;
-    }
-      return this.dclass;
+  loadConversation(): void {
+    this.messages = [];
+    this.message.senderId.userId = this.authUser.userId;
+    this.message.receiverId.userId = this.userId;
+    this.userService.userById(this.userId).subscribe(data => {
+      this.receiver = data;
+    });
+    this.messageService.getMessageBySenderId(this.authUser.userId, this.userId).subscribe(sent => {
+      this.messageService.getMessageBySenderId(this.userId, this.authUser.userId).subscribe(received => {
+        this.messages = (sent as any[]).concat(received as any[]);
+      });
+    });
   }
 
-  nofloatClass : any = "message other-message"
-  floatRight : any = "message other-message  float-right"
-  setMsgFLoat(id : number){
-    console.log(this.messages);
-    if(id == this.authUser.userId){
-      console.log(id + " "+ this.authUser.userId);
-      
-      return this.floatRight;
+  openChat(userId : any): void {
+    this.router.navigate(['chat/' + userId]);
+  }
+
+  sendMessage(): void {
+    if (!this.message.message || !this.message.message.trim()) {
+      return;
     }
-      return this.nofloatClass;
+    this.messageService.setMessage(this.message).subscribe(() => {
+      this.message.message = '';
+      this.loadConversation();
+    });
+  }
+
+  isMine(msg : any): boolean {
+    return msg && msg.senderId && this.authUser && msg.senderId.userId == this.authUser.userId;
+  }
+
+  initials(name : string): string {
+    if (!name) { return '?'; }
+    const parts = name.trim().split(/\s+/);
+    return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase();
   }
 
 }

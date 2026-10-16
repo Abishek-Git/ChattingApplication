@@ -1,18 +1,18 @@
 export interface Message{
 	message: string,
-	messageId: 0,
+	messageId: number,
 	receiverId: {
 	email: string,
 	name: string,
 	password: string,
-	userId: 0
+	userId: number
 	},
-	roomId: 0,
+	roomId: number,
 	senderId: {
 	email: string,
 	name: string,
 	password: string,
-	userId: 0
+	userId: number
 	},
 	time: any;
 

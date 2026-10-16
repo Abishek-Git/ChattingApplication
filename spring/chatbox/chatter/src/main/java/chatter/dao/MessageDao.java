@@ -2,10 +2,11 @@ package chatter.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,18 +16,18 @@ import chatter.entity.User;
 
 @Repository
 public class MessageDao  {
-	@Autowired
-	SessionFactory sessionFactory;
+	@PersistenceContext
+	EntityManager entityManager;
 	
 	@Autowired
 	UserDao userDao;
 	
 	protected Session getSession() {
-		return sessionFactory.getCurrentSession();
+		return entityManager.unwrap(Session.class);
 	}
 	
 	public List<Message> getMessageBySenderId(int userId, int receiverid) {
-		Query query = getSession().createQuery("from Message where senderid=:id and receiverid=:rid").setParameter("id", userId).setParameter("rid", receiverid);
+		Query query = getSession().createQuery("from Message where senderId.userId=:id and receiverId.userId=:rid").setParameter("id", userId).setParameter("rid", receiverid);
 		List<Message> messages = query.list();
 		System.out.println(messages);
 
@@ -35,7 +36,7 @@ public class MessageDao  {
 	
 	public List<Message> getMessageByReceiverId(int userId, int receiverid) {
 		System.out.println(userId);
-		Query query = getSession().createQuery("from Message where receiverid=:id and senderid=:rid").setParameter("id", userId).setParameter("rid", receiverid);
+		Query query = getSession().createQuery("from Message where receiverId.userId=:id and senderId.userId=:rid").setParameter("id", userId).setParameter("rid", receiverid);
 		List<Message> messages = query.list();
 		return messages;
 	}

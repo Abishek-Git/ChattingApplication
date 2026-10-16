@@ -9,18 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import chatter.entity.Message;
 import chatter.service.MessageService;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@EnableSwagger2
 @RestController
-@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
-		RequestMethod.DELETE }, allowCredentials = "true", allowedHeaders = "*")
+@CrossOrigin(origins = "*")
 public class MessageController {
 	
 	@Autowired

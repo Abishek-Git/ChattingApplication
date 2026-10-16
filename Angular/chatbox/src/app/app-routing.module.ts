@@ -6,6 +6,7 @@ import { LoginComponent } from './login/login.component';
 const routes: Routes = [
   { path: 'chat/:userId', component: ChatpageComponent },
   { path: 'login', component: LoginComponent },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];
 
 @NgModule({
